@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM php:7.1-cli
+FROM php:7.2-fpm
+
+WORKDIR /var/www/html
+
+EXPOSE 9000
 
 ENTRYPOINT [ "dumb-init", "--" ]
-CMD        [ "php", "-a" ]
+CMD        [ "php-fpm" ]
 
 # Prepare APT depedencies
 RUN set -ex \
@@ -31,7 +35,7 @@ RUN set -ex \
 # Install standard PHP extensions
 RUN set -ex \
     && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y libbz2-dev libicu-dev libmysqlclient-dev libpq-dev libsqlite3-dev libtidy-dev libxml2-dev libxslt1-dev \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y libbz2-dev libicu-dev libmariadbclient-dev-compat libpq-dev libsqlite3-dev libtidy-dev libxml2-dev libxslt1-dev \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j "$(nproc)" bcmath bz2 calendar exif gettext iconv intl json mbstring mysqli opcache pcntl pdo_mysql pdo_pgsql pdo_sqlite pgsql shmop simplexml soap sockets sysvmsg sysvsem sysvshm tidy wddx xml xmlrpc xsl zip
 
